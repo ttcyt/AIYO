@@ -1,18 +1,40 @@
+import 'dart:math';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class RegisterPage extends StatelessWidget {
-  const RegisterPage({super.key});
+  RegisterPage({super.key});
+
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final db = FirebaseFirestore.instance;
+  int id = 0;
+  String name = '';
+  String email = '';
+  String password = '';
+  DateTime birthday = DateTime.now();
+  String gender = '';
+  int height = 0;
+  int weight = 0;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFE6CAFB),
       body: Padding(
-        padding: EdgeInsets.only(top: 100,left: 20,right: 20,),
+        padding: const EdgeInsets.only(
+          top: 100,
+          left: 20,
+          right: 20,
+        ),
         child: Column(
           children: [
-            Text('AIYO'),
+            const Text('AIYO'),
             TextField(
+              onChanged: (value) {
+                name = value;
+              },
               textAlign: TextAlign.center,
               decoration: InputDecoration(
                 fillColor: Colors.white,
@@ -21,17 +43,22 @@ class RegisterPage extends StatelessWidget {
                 contentPadding: const EdgeInsets.only(top: 20, bottom: 20),
                 hintText: 'enter your name',
                 enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.transparent),
+                  borderSide: const BorderSide(color: Colors.transparent),
                   borderRadius: BorderRadius.circular(50),
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(50),
-                  borderSide: BorderSide(color: Colors.transparent),
+                  borderSide: const BorderSide(color: Colors.transparent),
                 ),
               ),
             ),
-            SizedBox(height: 15,),
+            const SizedBox(
+              height: 15,
+            ),
             TextField(
+              onChanged: (value) {
+                email = value;
+              },
               textAlign: TextAlign.center,
               decoration: InputDecoration(
                 fillColor: Colors.white,
@@ -40,17 +67,22 @@ class RegisterPage extends StatelessWidget {
                 contentPadding: const EdgeInsets.only(top: 20, bottom: 20),
                 hintText: 'enter your email',
                 enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.transparent),
+                  borderSide: const BorderSide(color: Colors.transparent),
                   borderRadius: BorderRadius.circular(50),
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(50),
-                  borderSide: BorderSide(color: Colors.transparent),
+                  borderSide: const BorderSide(color: Colors.transparent),
                 ),
               ),
             ),
-            SizedBox(height: 15,),
+            const SizedBox(
+              height: 15,
+            ),
             TextField(
+              onChanged: (value) {
+                password = value;
+              },
               textAlign: TextAlign.center,
               decoration: InputDecoration(
                 fillColor: Colors.white,
@@ -59,17 +91,22 @@ class RegisterPage extends StatelessWidget {
                 contentPadding: const EdgeInsets.only(top: 20, bottom: 20),
                 hintText: 'enter your password',
                 enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.transparent),
+                  borderSide: const BorderSide(color: Colors.transparent),
                   borderRadius: BorderRadius.circular(50),
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(50),
-                  borderSide: BorderSide(color: Colors.transparent),
+                  borderSide: const BorderSide(color: Colors.transparent),
                 ),
               ),
             ),
-            SizedBox(height: 15,),
+            const SizedBox(
+              height: 15,
+            ),
             TextField(
+              onChanged: (value) {
+                birthday = DateTime(int.parse(value));
+              },
               textAlign: TextAlign.center,
               decoration: InputDecoration(
                 fillColor: Colors.white,
@@ -78,17 +115,22 @@ class RegisterPage extends StatelessWidget {
                 contentPadding: const EdgeInsets.only(top: 20, bottom: 20),
                 hintText: 'enter your birthday',
                 enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.transparent),
+                  borderSide: const BorderSide(color: Colors.transparent),
                   borderRadius: BorderRadius.circular(50),
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(50),
-                  borderSide: BorderSide(color: Colors.transparent),
+                  borderSide: const BorderSide(color: Colors.transparent),
                 ),
               ),
             ),
-            SizedBox(height: 15,),
+            const SizedBox(
+              height: 15,
+            ),
             TextField(
+              onChanged: (value) {
+                gender = value;
+              },
               textAlign: TextAlign.center,
               decoration: InputDecoration(
                 fillColor: Colors.white,
@@ -97,38 +139,34 @@ class RegisterPage extends StatelessWidget {
                 contentPadding: const EdgeInsets.only(top: 20, bottom: 20),
                 hintText: 'enter your gender',
                 enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.transparent),
+                  borderSide: const BorderSide(color: Colors.transparent),
                   borderRadius: BorderRadius.circular(50),
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(50),
-                  borderSide: BorderSide(color: Colors.transparent),
+                  borderSide: const BorderSide(color: Colors.transparent),
                 ),
               ),
             ),
-            SizedBox(height: 15,),
-            TextField(
-              textAlign: TextAlign.center,
-              decoration: InputDecoration(
-                fillColor: Colors.white,
-                focusColor: Colors.white,
-                filled: true,
-                contentPadding: const EdgeInsets.only(top: 20, bottom: 20),
-                hintText: 'enter your ',
-                enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.transparent),
-                  borderRadius: BorderRadius.circular(50),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(50),
-                  borderSide: BorderSide(color: Colors.transparent),
-                ),
-              ),
+            const SizedBox(
+              height: 15,
             ),
-            SizedBox(height: 15,),
             TextButton(
-              onPressed: () {},
-              child: Text('Signin'),
+              onPressed: () {
+                _auth.createUserWithEmailAndPassword(
+                    email: email, password: password);
+                db.collection('users').doc('$email').set({
+                  'id': id,
+                  'name': name,
+                  'email': email,
+                  'birthday': birthday,
+                  'gender': gender,
+                  'height':height,
+                  'weight':weight,
+                  'BMI': weight/pow(height/100,2),
+                });
+              },
+              child: const Text('Signin'),
             ),
           ],
         ),

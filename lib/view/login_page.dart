@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+
 
 class LoginPage extends StatelessWidget {
-  const LoginPage({super.key});
+  LoginPage({super.key});
+  String email = '';
+  String password = '';
+  final FirebaseAuth _auth = FirebaseAuth.instance;
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +30,7 @@ class LoginPage extends StatelessWidget {
               ),
               SizedBox(height: 50,),
               TextField(
-          
+                onChanged: (value){email = value;},
                 textAlign: TextAlign.center,
                 decoration: InputDecoration(
                   fillColor: Colors.white,
@@ -47,9 +52,9 @@ class LoginPage extends StatelessWidget {
               ),
               SizedBox(height: 15,),
               TextField(
+                onChanged: (value){password = value;},
                 textAlign: TextAlign.center,
                 decoration: InputDecoration(
-          
                   filled: true,
                   fillColor: Colors.white,
                   focusColor: Colors.white,
@@ -64,13 +69,16 @@ class LoginPage extends StatelessWidget {
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(50),
                     borderSide: BorderSide(color: Colors.transparent),
-          
                   ),
                 ),
               ),
               SizedBox(height: 15,),
               TextButton(
-                onPressed: () {},
+                onPressed: () {
+                  _auth.signInWithEmailAndPassword(email: email, password: password);
+
+
+                },
                 child: Text('Login'),
               ),
               SizedBox(height: 10,),
