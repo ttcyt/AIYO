@@ -11,25 +11,34 @@ class SportDayPage extends StatefulWidget {
 
 class _SportDayPageState extends State<SportDayPage> {
   DateTime _selectedDay = DateTime.now();
-  DateTime _focusedDay = DateTime.now();
+  DateTime _focusDay = DateTime.now();
   String pickedTime = "";
+  CalendarFormat _calendarFormat = CalendarFormat.month;
   final TextEditingController _timeC = TextEditingController();
-  late final ValueNotifier<List<SportDay>> _selectEvent;
+  late TimeOfDay time;
   Map<DateTime, List<SportDay>> SportDays = {};
+
   @override
-  void initState() {
-    super.initState();
-    _selectEvent = ValueNotifier(_getEvent(_selectedDay!));
+  void _onDaySelected(DateTime selectedDay, DateTime focusDay) {
+    if (!isSameDay(selectedDay, _selectedDay)) {
+      setState(() {
+        _selectedDay = selectedDay;
+        _focusDay = focusDay;
+      });
+    }
   }
 
   List<SportDay> _getEvent(DateTime day) {
-    return SportDays[day] ??[];
+    return SportDays[day] ?? [];
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Select a time to exercise !'),backgroundColor: const Color(0xFFE6CAFB),),
+      appBar: AppBar(
+        title: Text('Select a time to exercise !'),
+        backgroundColor: const Color(0xFFE6CAFB),
+      ),
       backgroundColor: Colors.white,
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),
@@ -43,8 +52,9 @@ class _SportDayPageState extends State<SportDayPage> {
                     children: [
                       TextButton(
                           onPressed: () async {
-                            var time = await showTimePicker(
-                                context: context, initialTime: TimeOfDay.now());
+                            time = (await showTimePicker(
+                                context: context,
+                                initialTime: TimeOfDay.now()))!;
                             if (time != null) {
                               setState(() {
                                 _timeC.text = "${time.hour}:${time.minute}";
@@ -57,14 +67,27 @@ class _SportDayPageState extends State<SportDayPage> {
                         textAlign: TextAlign.center,
                         decoration: const InputDecoration(
                             border: OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(50)),
-                        )),
+                              borderRadius: BorderRadius.all(
+                                  Radius.circular(50)),
+                            )),
                       ),
                       ElevatedButton(
                           onPressed: () {
-                            SportDays.addAll({_selectedDay:[SportDay(date: DateTime(_selectedDay.month,_selectedDay.day,_selectedDay.hour,_selectedDay.minute), durationTime: 0)]});
+                            print(_selectedDay.month);
+                            print(_selectedDay.day);
+                            SportDays.addAll({
+                              _selectedDay!: [
+                                SportDay(
+                                  title: 'GO AND EXERCISE',
+                                  date: DateTime(
+                                      _selectedDay.month,
+                                      _selectedDay.day,
+                                      time.hour,
+                                      time.minute),
+                                  durationTime: 0,)
+                              ]
+                            });
                             Navigator.pop(context);
-                            _selectEvent.value = _getEvent(_selectedDay);
                           },
                           child: Text('submit'))
                     ],
@@ -78,43 +101,38 @@ class _SportDayPageState extends State<SportDayPage> {
         child: Column(
           children: [
             TableCalendar(
-                firstDay: DateTime.utc(2010, 10, 16),
-                lastDay: DateTime.utc(2030, 3, 14),
-                focusedDay: DateTime.now(),
-                eventLoader: _getEvent,
-                selectedDayPredicate: (day) {
-                  return isSameDay(_selectedDay, day);
-                },
-                onDaySelected: (selectedDay, focusedDay) {
+              firstDay: DateTime.utc(2010, 10, 16),
+              lastDay: DateTime.utc(2030, 3, 14),
+              focusedDay: _focusDay,
+              calendarFormat: _calendarFormat,
+              onPageChanged: (focusedDay) {
+                _focusDay = focusedDay;
+              },
+              eventLoader: _getEvent,
+              selectedDayPredicate: (day) {
+                return isSameDay(_selectedDay, day);
+              },
+              onFormatChanged: (format) {
+                if (_calendarFormat != format) {
                   setState(() {
-                    _selectedDay = selectedDay;
-                    _focusedDay = focusedDay;
-                    _selectEvent.value = _getEvent(_selectedDay);// update `_focusedDay` here as well
+
                   });
-                },
-                onPageChanged: (focusedDay) {
-                  _focusedDay = focusedDay;
-                }),
-            Expanded(
-              child: ValueListenableBuilder(
-                  valueListenable: _selectEvent, builder: (context,value,_) {
-                    return ListView.builder(
-                      itemCount: value.length,
-                    itemBuilder: (context,index){
-                      return Container(
-                        child: Padding(
-                          padding: EdgeInsets.all(8),
-                          child: Column(
-                            children: [
-                              Text('${value[index].date.month}月${value[index].date.day} '
-                                  '${value[index].date.hour}:${value[index].date.minute}')
-                            ],
-                          ),
-                        ),
-                      );
-                    });
-              }),
-            )
+                  _calendarFormat = format;
+                }
+              },
+              onDaySelected: _onDaySelected,
+            ),
+            // Expanded(
+            //   child: ListView.builder(
+            //     itemCount:,
+            //     itemBuilder: (context,index){
+            //       for(var date in SportDays){
+            //         if(date == _selectedDay){
+            //           return ListTile();
+            //         }
+            //       }
+            //     },),
+            // )
           ],
         ),
       ),

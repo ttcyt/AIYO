@@ -1,3 +1,4 @@
+import 'package:aiyo/view/bmi_page.dart';
 import 'package:aiyo/view/choose_pose_page.dart';
 import 'package:aiyo/view/register_page.dart';
 import 'package:flutter/material.dart';
@@ -10,9 +11,7 @@ class Aiyo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: SportDayPage(),
+      home: BmiPage(),
     );
   }
 }
-
-

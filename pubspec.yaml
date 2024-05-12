@@ -42,6 +42,7 @@ dependencies:
   cloud_firestore: ^4.15.7
   camera: ^0.10.5+9
   table_calendar: ^3.1.0
+  http: ^1.2.0
 
 dev_dependencies:
   flutter_test:
